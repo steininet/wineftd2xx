@@ -1,3 +1,34 @@
+********************************************************************************************
+QuickInfo: 
+I spend some time to get a Windows Service with a FTD232R Dongle to work.
+- new Driver 1.4.8 in Makefile
+- fixed a fatal compile error -> unknown type name LPCTSTR
+- Analyzed SIGSEGV 11 CoreDump to FT_SetEventNotification and removed shim function. (may someone know a bit more about mutex)
+- Fixed and extended Trace Commands - did not get anything out on WINEDEBUG=ftd2xx.
+- tested on pure i386 xubuntu with wine 3.0 on Atom HW - NOMULTILIBTESTdone
+
+Command to build:  
+sudo apt-get install wine32 git build-essential wine32-tools cabextract winbind  
+git clone https://github.com/steininet/wineftd2xx  
+cd wineftd2xx  
+sudo make install ARCH=i386 WINEDLLPATH=/usr/lib/i386-linux-gnu/wine  
+
+Command to Install the Driver on a i386  
+sudo cp libftd2xx-i386-1.4.8/build/libftd2xx.so.1.4.8 /usr/local/lib  
+sudo cp libftd2xx-i386-1.4.8/build/libftd2xx.a /usr/local/lib  
+sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.8 /usr/lib/libftd2xx.so  
+sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.8 /usr/local/lib/libftd2xx.so  
+sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.8  
+sudo lconfig -v  
+
+<implement /etc/udev/rules.d with the right VID/PID to get userspace access rights>
+
+Command to Start  
+WINEPREFIX=~/.aprefix WINEARCH="win32" FTDID=dc48 WINEDEBUG=ftd2xx wine <some.exe>  
+
+this is based on https://github.com/brentr/wineftd2xx  
+********************************************************************************************
+
 This is a Linux Wine dll.so that substitutes for FTDI's D2XX drivers.
 It is effectively a shim layer between the FTDI's Linux D2XX drivers and 
 Microsoft Windows applicatons running under Wine.
